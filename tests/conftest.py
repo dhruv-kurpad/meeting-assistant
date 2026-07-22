@@ -21,6 +21,21 @@ SAMPLE_TRANSCRIPT = (
     "Bob owns the launch checklist."
 )
 
+SAMPLE_NOTES = {
+    "summary": "The team agreed to ship the beta on Friday and assigned follow-ups.",
+    "key_points": [
+        "Beta ships on Friday",
+        "Alice owns meeting notes",
+        "Bob owns the launch checklist",
+    ],
+    "decisions": ["Ship the beta on Friday"],
+    "action_items": [
+        {"owner": "Alice", "description": "Send the notes", "due_date": "Monday"},
+        {"owner": "Bob", "description": "Own the launch checklist", "due_date": None},
+    ],
+    "topics": ["beta launch", "follow-ups"],
+}
+
 
 @pytest.fixture()
 def db_session():
@@ -42,7 +57,7 @@ def db_session():
 
 @pytest.fixture()
 def client(db_session, monkeypatch, tmp_path):
-    """API client with test DB, temp uploads, and mocked Whisper."""
+    """API client with test DB, temp uploads, and mocked Whisper/LLM."""
 
     def override_get_db():
         try:
@@ -58,6 +73,10 @@ def client(db_session, monkeypatch, tmp_path):
     monkeypatch.setattr(
         "backend.services.whisper_service.transcribe",
         lambda _path: SAMPLE_TRANSCRIPT,
+    )
+    monkeypatch.setattr(
+        "backend.services.llm_service.summarize",
+        lambda _transcript: dict(SAMPLE_NOTES),
     )
 
     with TestClient(app) as test_client:

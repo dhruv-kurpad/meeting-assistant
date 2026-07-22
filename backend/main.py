@@ -1,5 +1,8 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
 
 from backend.database import Base, engine
 from backend import models  # noqa: F401 — register models with Base

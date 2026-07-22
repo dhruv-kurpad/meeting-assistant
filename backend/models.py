@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.database import Base
@@ -18,6 +18,9 @@ class Meeting(Base):
     date: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
     transcript: Mapped[str | None] = mapped_column(Text, nullable=True)
     summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    key_points: Mapped[list | None] = mapped_column(JSON, nullable=True, default=list)
+    decisions: Mapped[list | None] = mapped_column(JSON, nullable=True, default=list)
+    tags: Mapped[list | None] = mapped_column(JSON, nullable=True, default=list)
     audio_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
 
     action_items: Mapped[list["ActionItem"]] = relationship(
